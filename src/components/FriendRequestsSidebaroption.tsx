@@ -28,7 +28,7 @@ const FriendRequestsSidebaroption: FC<FriendRequestsSidebaroptionProps> = ({ ses
             pusherClient.unbind('incoming_friend_request', friendRequestHandler)
         }
 
-    }, [])
+    }, [sessionId])
 
     return (
         <Link href='/dashboard/requests' className="text-gray-700 p-2 hover:text-indigo-600 hover:bg-gray-50 group flex items-center gap-x-3 rounded-md text-sm leading-6 font-semibold">

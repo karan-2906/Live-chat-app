@@ -7,7 +7,7 @@ import { signIn } from "next-auth/react";
 
 interface pageProps { }
 
-const page: FC<pageProps> = ({ }) => {
+const Page: FC<pageProps> = ({ }) => {
 
     const [isloading, setIsloading] = useState<boolean>(false);
 
@@ -78,4 +78,4 @@ const page: FC<pageProps> = ({ }) => {
     )
 }
 
-export default page;
+export default Page;
