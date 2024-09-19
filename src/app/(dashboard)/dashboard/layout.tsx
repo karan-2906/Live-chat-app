@@ -1,5 +1,6 @@
 import FriendRequestsSidebaroption from "@/components/FriendRequestsSidebaroption";
 import { Icon, Icons } from "@/components/Icons";
+import MobileChatLayout from "@/components/MobileChatLayout";
 import Sidebarchatlist from "@/components/Sidebarchatlist";
 import SignOutButton from "@/components/SinOutButton";
 import { getFriendsByUserId } from "@/helpers/get-friends-by-user-id";
@@ -10,19 +11,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FC, ReactNode } from "react";
+import { SidebarOption } from '@/types/typings'
 
 interface LayoutProps {
     children: ReactNode;
 }
-interface SidebarOption {
-    id: number
-    name: string
-    Icon: Icon
-    herf: string
-}
 
 const sidebarOptions: SidebarOption[] = [
-    { id: 1, name: 'Add Friend', Icon: "UserPlus", herf: '/dashboard/add' },
+    { id: 1, name: 'Add Friend', Icon: "UserPlus",href:'/dashboard/add-friend' },
 ]
 
 const Layout = async ({ children }: LayoutProps) => {
@@ -44,7 +40,10 @@ const Layout = async ({ children }: LayoutProps) => {
 
     return (
         <div className="w-full flex h-screen ">
-            <div className="flex h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+            <div className="md:hidden">
+                <MobileChatLayout friends={friends} session={session} unseenRequestCount={unseenRequestCount} sidebarOptions={sidebarOptions}/>
+            </div>
+            <div className="md:flex hidden h-full w-full max-w-xs grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
                 <Link href='/dashboard' className="flex h-16 shrink-0 items-center ">
                     <Icons.Logo />
                 </Link>
@@ -68,7 +67,7 @@ const Layout = async ({ children }: LayoutProps) => {
                                     const Icon = Icons[option.Icon]
                                     return (
                                         <li key={option.id} >
-                                            <Link href={option.herf} className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-3 text-sm leading-6 font-semibold p-2 rounded-md">
+                                            <Link href={option.href} className="text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group flex gap-3 text-sm leading-6 font-semibold p-2 rounded-md">
                                                 <span className="text-gray-400 border-gray-200 group-hover:border-indigo-600 group-hover:text-indigo-600 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] bg-white font-medium">
                                                     <Icon className="h-4 w-4" />
                                                 </span>

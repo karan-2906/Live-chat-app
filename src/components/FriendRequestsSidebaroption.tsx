@@ -16,16 +16,26 @@ const FriendRequestsSidebaroption: FC<FriendRequestsSidebaroptionProps> = ({ ses
 
     useEffect(() => {
         pusherClient.subscribe(topusherKey(`user:${sessionId}:incoming_friend_request`))
+        pusherClient.subscribe(topusherKey(`user:${sessionId}:friends`))
+
 
         const friendRequestHandler = () => {
            setUnseeeRequestCount((prev) => prev + 1)
         }
 
+        const addedfriend = () => {
+            setUnseeeRequestCount((prev) => prev - 1)
+        }
+
         pusherClient.bind('incoming_friend_request', friendRequestHandler)
+        pusherClient.bind('new_friend', addedfriend)
+
 
         return () => {
             pusherClient.unsubscribe(topusherKey(`user:${sessionId}:incoming_friend_request`))
+            pusherClient.unsubscribe(topusherKey(`user:${sessionId}:friends`))
             pusherClient.unbind('incoming_friend_request', friendRequestHandler)
+            pusherClient.unbind('new_friend', addedfriend)
         }
 
     }, [sessionId])

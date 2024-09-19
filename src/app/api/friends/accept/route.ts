@@ -1,8 +1,10 @@
 import { fetchredis } from "@/helpers/redis"
 import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
+import { pusherServer } from "@/lib/pusher"
+import { topusherKey } from "@/lib/utils"
 import { getServerSession } from "next-auth"
-import { z } from "zod"
+import { promise, z } from "zod"
 
 export async function POST(req: Request) {
     try {
@@ -31,18 +33,27 @@ export async function POST(req: Request) {
             return new Response('No friend request', { status: 400 })
         }
 
-        await db.sadd(`user:${session.user.id}:friends`, idToAdd)
+        const [userRaw, friendRaw] = (await Promise.all([
+            fetchredis('get', `user:${session.user.id}`),
+            fetchredis('get', `user:${idToAdd}`)
+        ])) as [string, string]
 
-        await db.sadd(`user:${idToAdd}:friends`, session.user.id)
+        const user = JSON.parse(userRaw) as User
+        const friend = JSON.parse(friendRaw) as User
 
-        // await db.srem(`user:${idToAdd}:incoming_friend_request`, session.user.id)
+        await Promise.all([
+            await pusherServer.trigger(topusherKey(`user:${idToAdd}:friends`), 'new_friend', user),
+            await pusherServer.trigger(topusherKey(`user:${session.user.id}:friends`), 'new_friend', friend),
+            await db.sadd(`user:${session.user.id}:friends`, idToAdd),
+            await db.sadd(`user:${idToAdd}:friends`, session.user.id),
+            await db.srem(`user:${session.user.id}:incoming_friend_request`, idToAdd)
+        ])
 
-        await db.srem(`user:${session.user.id}:incoming_friend_request`, idToAdd)
 
         return new Response('OK')
     } catch (error) {
         console.error(error)
-        if(error instanceof z.ZodError){
+        if (error instanceof z.ZodError) {
             return new Response('Invalid request Payload', { status: 422 })
         }
         return new Response('Invalid Request', { status: 400 })

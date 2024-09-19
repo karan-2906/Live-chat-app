@@ -58,7 +58,7 @@ const FriendRequests: FC<FriendRequestsProps> = ({
     return (
         <>
             {friendrequest.length === 0 ? (
-                <p className="text-sm text-zinc-500">Nothing to show here...</p>
+                <p className="text-sm text-zinc-500">No Pending Friend Requests...</p>
             ) : (
                 friendrequest.map((request) => (
                     <div key={request.senderId} className='flex gap-4 items-center'>

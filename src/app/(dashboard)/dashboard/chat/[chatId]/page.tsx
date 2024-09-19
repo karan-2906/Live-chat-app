@@ -49,7 +49,8 @@ const page = async ({ params }: pageProps) => {
     if (userId1 !== user.id && userId2 !== user.id) notFound()
 
     const chatpartnerId = user.id === userId1 ? userId2 : userId1
-    const chatpartner = (await db.get(`user:${chatpartnerId}`)) as User
+    const chatpartnerraw=await fetchredis('get',`user:${chatpartnerId}`) as string
+    const chatpartner=JSON.parse(chatpartnerraw) as User
     const initialmessages = await getchatmessages(chatId)
 
 
