@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 
         console.log("trigger pusher")
 
-        pusherServer.trigger(topusherKey(`user:${idToAdd}:incoming_friend_request`), 'incoming_friend_request', {
+        await pusherServer.trigger(topusherKey(`user:${idToAdd}:incoming_friend_request`), 'incoming_friend_request', {
             senderId: session.user.id,
             senderemail: session.user.email
         })

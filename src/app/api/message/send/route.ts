@@ -45,10 +45,10 @@ export async function POST(req: Request) {
 
         const message = messageValidator.parse(messageData);
 
-        pusherServer.trigger(topusherKey(`chat:${chatId}`), 'incoming_message', message)
+        await pusherServer.trigger(topusherKey(`chat:${chatId}`), 'incoming_message', message)
 
         console.log("trigerring")
-        pusherServer.trigger(topusherKey(`user:${friendId}:chats`), 'new_message', {
+        await pusherServer.trigger(topusherKey(`user:${friendId}:chats`), 'new_message', {
             ...message,
             senderImg: sender.image,
             senderName: sender.name
